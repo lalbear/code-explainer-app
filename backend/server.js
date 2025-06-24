@@ -10,7 +10,10 @@ const app = express();
 
 // === MIDDLEWARE ===
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: [
+    process.env.FRONTEND_URL || "http://localhost:3000",
+    "https://code-explainer-app-5kgp.vercel.app" // Add your frontend URL directly
+  ],
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
 }));

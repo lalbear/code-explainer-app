@@ -1,6 +1,7 @@
-// src/services/api.js
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const explainCode = async (code, language) => {
-  const response = await fetch("http://localhost:5050/api/explain", {
+  const response = await fetch(`${API_URL}/explain`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -9,7 +10,7 @@ export const explainCode = async (code, language) => {
   });
 
   if (!response.ok) {
-    const err = await response.text(); // capture the actual error message
+    const err = await response.text();
     throw new Error(err || "Failed to get explanation");
   }
 
