@@ -30,5 +30,13 @@ app.get("/health", (req, res) => {
 const explainRoutes = require("./routes/explainCode");
 app.use("/api", explainRoutes);
 
-// ✅ Export app instead of listening here
+// ✅ If running locally, start the server
+if (require.main === module) {
+  const PORT = process.env.PORT || 5050;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+  });
+}
+
+// ✅ For Vercel deployment
 module.exports = app;
