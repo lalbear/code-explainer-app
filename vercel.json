@@ -16,15 +16,19 @@
   "routes": [
     {
       "src": "/health",
-      "dest": "/backend/server.js"
+      "dest": "backend/server.js"
     },
     {
       "src": "/api/(.*)",
-      "dest": "/backend/server.js"
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|gif|svg))",
+      "dest": "frontend/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/index.html"
+      "dest": "frontend/index.html"
     }
   ]
 }
