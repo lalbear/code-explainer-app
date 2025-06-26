@@ -4,16 +4,17 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import Prism from "prismjs";
 
-// 🔧 Include required Prism languages
-import "prismjs/components/prism-markup"; // Needed for markdown/html rendering
+// Prism languages
+import "prismjs/components/prism-markup"; // for HTML
+import "prismjs/components/prism-clike";  // required base
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-python";
 
-// 🎨 Include a theme
+// Prism theme
 import "prismjs/themes/prism-tomorrow.css";
 
-// 🧠 Custom renderer for better headings (e.g., underlining "CODE EXPLANATION")
+// Custom renderer to style markdown headings/code
 const renderer = new marked.Renderer();
 renderer.heading = (text, level) => {
   if (level === 3 && text.toLowerCase().includes("code explanation")) {
@@ -43,7 +44,8 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
         clearInterval(interval);
         setDisplayedHtml(cleanHtml);
         setTypingDone(true);
-        Prism.highlightAll(); // Re-highlight after full render
+        // Defer Prism highlight until DOM is rendered
+        setTimeout(() => Prism.highlightAll(), 0);
       }
     }, 5);
 
