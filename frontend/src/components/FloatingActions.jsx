@@ -8,8 +8,7 @@ const FloatingActions = ({ onClear, onExport, isDisabled }) => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex gap-3">
       <Button
-        variant="outline"
-        className="bg-white dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-900 text-red-600 border border-red-300"
+        className="bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900 text-red-600 dark:text-red-400 border border-red-300 dark:border-red-600 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={onClear}
         disabled={isDisabled}
       >
@@ -17,8 +16,7 @@ const FloatingActions = ({ onClear, onExport, isDisabled }) => {
         Clear
       </Button>
       <Button
-        variant="default"
-        className="bg-indigo-600 text-white hover:bg-indigo-700"
+        className="bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={onExport}
         disabled={isDisabled}
       >
