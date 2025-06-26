@@ -4,9 +4,9 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import Prism from "prismjs";
 
-// Prism languages
-import "prismjs/components/prism-markup"; // for HTML
-import "prismjs/components/prism-clike";  // required base
+// Prism language support
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-markup";      // HTML
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-python";
@@ -14,7 +14,7 @@ import "prismjs/components/prism-python";
 // Prism theme
 import "prismjs/themes/prism-tomorrow.css";
 
-// Custom renderer to style markdown headings/code
+// ✅ Custom markdown renderer
 const renderer = new marked.Renderer();
 renderer.heading = (text, level) => {
   if (level === 3 && text.toLowerCase().includes("code explanation")) {
@@ -39,12 +39,11 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
     let i = 0;
     const interval = setInterval(() => {
       setDisplayedHtml(cleanHtml.slice(0, i));
-      i += 8;
+      i += 6;
       if (i >= cleanHtml.length) {
         clearInterval(interval);
         setDisplayedHtml(cleanHtml);
         setTypingDone(true);
-        // Defer Prism highlight until DOM is rendered
         setTimeout(() => Prism.highlightAll(), 0);
       }
     }, 5);
@@ -64,7 +63,7 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
   return (
     <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm transition">
       <div
-        className="prose dark:prose-invert max-w-none prose-pre:bg-slate-900 prose-pre:text-white prose-code:text-pink-500 prose-headings:text-blue-700 dark:prose-headings:text-blue-300"
+        className="prose dark:prose-invert max-w-none prose-pre:bg-transparent prose-headings:text-blue-700 dark:prose-headings:text-blue-300"
         dangerouslySetInnerHTML={{ __html: displayedHtml }}
       />
       {!typingDone && <span className="animate-pulse text-pink-500 ml-1">|</span>}
