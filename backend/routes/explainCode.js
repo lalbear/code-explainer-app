@@ -25,7 +25,7 @@ router.post('/explain', validateCodeRequest, async (req, res) => {
     const prompt = `Explain this ${language} code step-by-step:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: "meta-llama/llama-3.3-8b-instruct:free",
+      model: "mistralai/devstral-small-2505:free",
       messages: [{ role: 'user', content: prompt }]
     }, {
       headers: {
