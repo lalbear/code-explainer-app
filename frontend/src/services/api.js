@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const explainCode = async (code, language) => {
-  const response = await fetch(`${API_URL}/explain`, {
+  const response = await fetch(`${API_URL}/api/explain`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
