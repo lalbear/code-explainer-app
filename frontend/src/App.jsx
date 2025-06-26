@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CodeIcon } from "lucide-react";
+import { CodeIcon, Heart, Mail, Github } from "lucide-react";
 
 import { ThemeProvider } from "./context/ThemeContext";
 import { explainCode } from "./services/api";
@@ -71,7 +71,7 @@ function AppContent() {
       {/* Explanations List */}
       <main
         ref={explanationRef}
-        className="flex flex-col gap-4 p-4 pb-28 max-w-3xl mx-auto"
+        className="flex flex-col gap-4 p-4 pb-32 max-w-3xl mx-auto"
       >
         {explanations.length === 0 ? (
           <p className="text-center text-slate-500 mt-16">
@@ -104,6 +104,46 @@ function AppContent() {
 
       {/* Bottom Action Buttons */}
       <FloatingActions onClear={handleClear} onExport={handleExport} />
+
+      {/* Contact Footer */}
+      <footer className="bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 mt-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Developer Info */}
+            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+              <span>Developed with</span>
+              <Heart className="w-4 h-4 text-red-500 fill-current" />
+              <span>by</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
+                Pranjal Upadhyay
+              </span>
+            </div>
+            
+            {/* Contact Links */}
+            <div className="flex items-center gap-4">
+              <a
+                href="mailto:pranjalup25@gmail.com"
+                className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                <span className="hidden sm:inline">pranjalup25@gmail.com</span>
+                <span className="sm:hidden">Email</span>
+              </a>
+              
+              <a
+                href="https://github.com/lalbear"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                <span className="hidden sm:inline">lalbear</span>
+                <span className="sm:hidden">GitHub</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
