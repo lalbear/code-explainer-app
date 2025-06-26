@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 export default function ExplanationBubble({ explanation, clearExplanation }) {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedHtml, setDisplayedHtml] = useState("");
   const [typingDone, setTypingDone] = useState(false);
 
   useEffect(() => {
     if (!explanation) return;
 
-    setDisplayedText("");
+    setDisplayedHtml("");
     setTypingDone(false);
 
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(explanation.slice(0, i));
-      i += 6;
-      if (i >= explanation.length) {
-        clearInterval(interval);
-        setDisplayedText(explanation);
-        setTypingDone(true);
-      }
-    }, 50);
+    try {
+      // Simple marked parsing without custom renderer
+      const rawHtml = marked.parse(explanation);
+      const cleanHtml = DOMPurify.sanitize(rawHtml);
 
-    return () => clearInterval(interval);
+      let i = 0;
+      const interval = setInterval(() => {
+        setDisplayedHtml(cleanHtml.slice(0, i));
+        i += 6;
+        if (i >= cleanHtml.length) {
+          clearInterval(interval);
+          setDisplayedHtml(cleanHtml);
+          setTypingDone(true);
+        }
+      }, 5);
+
+      return () => clearInterval(interval);
+    } catch (error) {
+      console.error("Error processing markdown:", error);
+      setDisplayedHtml(`<p>Error processing explanation: ${error.message}</p>`);
+      setTypingDone(true);
+    }
   }, [explanation]);
 
   const handleExport = () => {
@@ -34,28 +46,24 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
     link.click();
   };
 
-  // Simple test to make sure component renders
-  if (!explanation) {
-    return <div>No explanation provided</div>;
-  }
-
   return (
-    <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm">
-      <div className="whitespace-pre-wrap">
-        {displayedText}
-      </div>
+    <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm transition">
+      <div
+        className="prose dark:prose-invert max-w-none prose-pre:bg-transparent prose-headings:text-blue-700 dark:prose-headings:text-blue-300"
+        dangerouslySetInnerHTML={{ __html: displayedHtml }}
+      />
       {!typingDone && <span className="animate-pulse text-pink-500 ml-1">|</span>}
 
       <div className="flex justify-end gap-3">
         <button
           onClick={handleExport}
-          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100"
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 transition"
         >
           <DownloadIcon /> Export
         </button>
         <button
           onClick={clearExplanation}
-          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-red-200 dark:bg-red-700 hover:bg-red-300 dark:hover:bg-red-600 text-red-900 dark:text-red-100"
+          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-red-200 dark:bg-red-700 hover:bg-red-300 dark:hover:bg-red-600 text-red-900 dark:text-red-100 transition"
         >
           <TrashIcon /> Clear
         </button>
