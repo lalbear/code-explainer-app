@@ -1,27 +1,38 @@
-// src/components/ExplanationBubble.jsx
-
 import React, { useEffect, useState } from "react";
 import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
+import Prism from "prismjs";
+import "prismjs/components/prism-javascript"; // add more languages if needed
+import "prismjs/components/prism-cpp";
+import "prismjs/components/prism-python";
+import "prismjs/themes/prism-tomorrow.css"; // or your preferred theme
 
 export default function ExplanationBubble({ explanation, clearExplanation }) {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedHtml, setDisplayedHtml] = useState("");
   const [typingDone, setTypingDone] = useState(false);
 
   useEffect(() => {
     if (!explanation) return;
 
-    setDisplayedText("");
+    // Reset
+    setDisplayedHtml("");
     setTypingDone(false);
+
+    // Convert Markdown to HTML, sanitize, and add typing animation
+    const cleanHtml = DOMPurify.sanitize(marked.parse(explanation));
 
     let i = 0;
     const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + explanation.charAt(i));
-      i++;
-      if (i >= explanation.length) {
+      setDisplayedHtml(cleanHtml.slice(0, i));
+      i += 8; // You can slow down typing here
+      if (i >= cleanHtml.length) {
         clearInterval(interval);
+        setDisplayedHtml(cleanHtml);
         setTypingDone(true);
+        Prism.highlightAll();
       }
-    }, 5); // You can slow this down by increasing delay
+    }, 5);
 
     return () => clearInterval(interval);
   }, [explanation]);
@@ -37,10 +48,11 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
 
   return (
     <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm transition">
-      <div className="whitespace-pre-wrap font-mono text-sm text-slate-800 dark:text-slate-100">
-        {displayedText}
-        {!typingDone && <span className="animate-pulse text-pink-500">|</span>}
-      </div>
+      <div
+        className="prose dark:prose-invert max-w-none prose-pre:bg-slate-900 prose-pre:text-white prose-code:text-pink-500 prose-headings:text-blue-700 dark:prose-headings:text-blue-300"
+        dangerouslySetInnerHTML={{ __html: displayedHtml }}
+      />
+      {!typingDone && <span className="animate-pulse text-pink-500 ml-1">|</span>}
 
       <div className="flex justify-end gap-3">
         <button
