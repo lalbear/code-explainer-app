@@ -14,14 +14,22 @@ import "prismjs/components/prism-python";
 // Prism theme
 import "prismjs/themes/prism-tomorrow.css";
 
-// ✅ Custom markdown renderer
-const renderer = new marked.Renderer();
-renderer.heading = (text, level) => {
-  if (level === 3 && text.toLowerCase().includes("code explanation")) {
-    return `<h2 class="text-2xl font-bold underline mb-4">${text}</h2>`;
+// ✅ Fixed custom markdown renderer
+const renderer = {
+  heading(text, level) {
+    if (level === 3 && text.toLowerCase().includes("code explanation")) {
+      return `<h2 class="text-2xl font-bold underline mb-4">${text}</h2>`;
+    }
+    return `<h${level} class="text-xl font-semibold mb-2">${text}</h${level}>`;
   }
-  return `<h${level} class="text-xl font-semibold mb-2">${text}</h${level}>`;
 };
+
+// Configure marked with the renderer
+marked.setOptions({
+  renderer: renderer,
+  breaks: true,
+  gfm: true
+});
 
 export default function ExplanationBubble({ explanation, clearExplanation }) {
   const [displayedHtml, setDisplayedHtml] = useState("");
@@ -33,7 +41,8 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
     setDisplayedHtml("");
     setTypingDone(false);
 
-    const rawHtml = marked.parse(explanation, { renderer });
+    // Use marked.parse without passing renderer again
+    const rawHtml = marked.parse(explanation);
     const cleanHtml = DOMPurify.sanitize(rawHtml);
 
     let i = 0;
