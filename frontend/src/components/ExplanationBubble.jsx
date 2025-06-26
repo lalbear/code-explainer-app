@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
-
-// 📌 Markdown to HTML & sanitization
 import { marked } from "marked";
 import DOMPurify from "dompurify";
-
-// 📌 PrismJS core + languages + theme
 import Prism from "prismjs";
+
+// 🔧 Include required Prism languages
+import "prismjs/components/prism-markup"; // Needed for markdown/html rendering
 import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-python";
-import "prismjs/components/prism-cpp"; // Add more if needed
-import "prismjs/themes/prism-tomorrow.css"; // Theme (you can change to another)
 
+// 🎨 Include a theme
+import "prismjs/themes/prism-tomorrow.css";
 
-// Custom renderer for better heading and code styling
+// 🧠 Custom renderer for better headings (e.g., underlining "CODE EXPLANATION")
 const renderer = new marked.Renderer();
 renderer.heading = (text, level) => {
   if (level === 3 && text.toLowerCase().includes("code explanation")) {
@@ -43,7 +43,7 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
         clearInterval(interval);
         setDisplayedHtml(cleanHtml);
         setTypingDone(true);
-        Prism.highlightAll();
+        Prism.highlightAll(); // Re-highlight after full render
       }
     }, 5);
 
