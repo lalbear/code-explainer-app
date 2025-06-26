@@ -8,20 +8,20 @@ let Prism = null;
 
 const loadPrism = async () => {
   if (Prism) return Prism;
-  
+
   try {
     const prismModule = await import("prismjs");
-    
+
     // Import language components
     await import("prismjs/components/prism-clike");
     await import("prismjs/components/prism-markup");
     await import("prismjs/components/prism-javascript");
     await import("prismjs/components/prism-cpp");
     await import("prismjs/components/prism-python");
-    
+
     // Import theme
     await import("prismjs/themes/prism-tomorrow.css");
-    
+
     Prism = prismModule.default;
     return Prism;
   } catch (error) {
@@ -52,7 +52,7 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
           clearInterval(interval);
           setDisplayedHtml(cleanHtml);
           setTypingDone(true);
-          
+
           // Safely highlight code after typing is done
           setTimeout(async () => {
             try {
@@ -95,15 +95,15 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
       <div className="flex justify-end gap-3">
         <button
           onClick={handleExport}
-          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 transition"
+          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-700 dark:hover:bg-blue-600 text-blue-800 dark:text-blue-100 border border-blue-200 dark:border-blue-600 transition-all duration-200 font-medium"
         >
-          <DownloadIcon /> Export
+          <DownloadIcon className="w-4 h-4" /> Export
         </button>
         <button
           onClick={clearExplanation}
-          className="flex items-center gap-1 text-sm px-3 py-1.5 rounded bg-red-200 dark:bg-red-700 hover:bg-red-300 dark:hover:bg-red-600 text-red-900 dark:text-red-100 transition"
+          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-700 dark:hover:bg-red-600 text-red-800 dark:text-red-100 border border-red-200 dark:border-red-600 transition-all duration-200 font-medium"
         >
-          <TrashIcon /> Clear
+          <TrashIcon className="w-4 h-4" /> Clear
         </button>
       </div>
     </div>
