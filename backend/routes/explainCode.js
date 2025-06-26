@@ -22,7 +22,22 @@ const validateCodeRequest = (req, res, next) => {
 router.post('/explain', validateCodeRequest, async (req, res) => {
   try {
     const { code, language = 'cpp' } = req.body;
-    const prompt = `Explain this ${language} code step-by-step:\n\n\`\`\`${language}\n${code}\n\`\`\``;
+
+    const prompt = `
+Explain the following ${language} code with this structure:
+
+1. First, provide a **clear, concise algorithm-style summary** of what the code does.
+   - Use step-by-step bullets.
+   - Highlight key terms like loops, functions, conditions, or important values in **bold**.
+
+2. After that, add a large bold section header that says: **CODE EXPLANATION**
+   - Then explain the code line-by-line or block-by-block in simple language.
+
+Here is the code:
+\`\`\`${language}
+${code}
+\`\`\`
+`;
 
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: "mistralai/devstral-small-2505:free",
