@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
+
+// 📌 Markdown to HTML & sanitization
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+
+// 📌 PrismJS core + languages + theme
 import Prism from "prismjs";
 import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-python";
-import "prismjs/themes/prism-tomorrow.css";
+import "prismjs/components/prism-cpp"; // Add more if needed
+import "prismjs/themes/prism-tomorrow.css"; // Theme (you can change to another)
+
 
 // Custom renderer for better heading and code styling
 const renderer = new marked.Renderer();
