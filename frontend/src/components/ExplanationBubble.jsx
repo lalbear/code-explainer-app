@@ -3,10 +3,19 @@ import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import Prism from "prismjs";
-import "prismjs/components/prism-javascript"; // add more languages if needed
+import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-python";
-import "prismjs/themes/prism-tomorrow.css"; // or your preferred theme
+import "prismjs/themes/prism-tomorrow.css";
+
+// Custom renderer for better heading and code styling
+const renderer = new marked.Renderer();
+renderer.heading = (text, level) => {
+  if (level === 3 && text.toLowerCase().includes("code explanation")) {
+    return `<h2 class="text-2xl font-bold underline mb-4">${text}</h2>`;
+  }
+  return `<h${level} class="text-xl font-semibold mb-2">${text}</h${level}>`;
+};
 
 export default function ExplanationBubble({ explanation, clearExplanation }) {
   const [displayedHtml, setDisplayedHtml] = useState("");
@@ -15,17 +24,16 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
   useEffect(() => {
     if (!explanation) return;
 
-    // Reset
     setDisplayedHtml("");
     setTypingDone(false);
 
-    // Convert Markdown to HTML, sanitize, and add typing animation
-    const cleanHtml = DOMPurify.sanitize(marked.parse(explanation));
+    const rawHtml = marked.parse(explanation, { renderer });
+    const cleanHtml = DOMPurify.sanitize(rawHtml);
 
     let i = 0;
     const interval = setInterval(() => {
       setDisplayedHtml(cleanHtml.slice(0, i));
-      i += 8; // You can slow down typing here
+      i += 8;
       if (i >= cleanHtml.length) {
         clearInterval(interval);
         setDisplayedHtml(cleanHtml);
