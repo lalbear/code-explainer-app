@@ -102,8 +102,9 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
   <button
     onClick={clearExplanation}
     className={`flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium transition-all duration-200
-      text-white bg-red-600 hover:bg-red-700
-      dark:bg-red-700 dark:hover:bg-red-600`}
+  text-white bg-red-600 hover:bg-red-700
+  dark:bg-red-700 dark:hover:bg-red-600`}
+
   >
     <TrashIcon className="w-4 h-4" /> Clear
   </button>
