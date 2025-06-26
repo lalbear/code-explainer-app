@@ -95,13 +95,21 @@ export default function ExplanationBubble({ explanation, clearExplanation }) {
       <div className="flex justify-end gap-3">
   <button
     onClick={handleExport}
-    className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 text-white border border-blue-600 dark:border-blue-600 transition-all duration-200 font-medium"
+    className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg 
+      bg-blue-600 hover:bg-blue-700 text-white 
+      dark:bg-blue-700 dark:hover:bg-blue-600 
+      border border-blue-700 dark:border-blue-600 
+      transition-all duration-200 font-medium"
   >
     <DownloadIcon className="w-4 h-4" /> Export
   </button>
   <button
     onClick={clearExplanation}
-    className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-600 text-white border border-red-600 dark:border-red-600 transition-all duration-200 font-medium"
+    className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg 
+      bg-red-600 hover:bg-red-700 text-white 
+      dark:bg-red-700 dark:hover:bg-red-600 
+      border border-red-700 dark:border-red-600 
+      transition-all duration-200 font-medium"
   >
     <TrashIcon className="w-4 h-4" /> Clear
   </button>
