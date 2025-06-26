@@ -103,7 +103,11 @@ function AppContent() {
       />
 
       {/* Bottom Action Buttons */}
-      <FloatingActions onClear={handleClear} onExport={handleExport} />
+      <FloatingActions 
+        onClear={handleClear} 
+        onExport={handleExport} 
+        isDisabled={explanations.length === 0}
+      />
 
       {/* Contact Footer */}
       <footer className="bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 mt-8">
