@@ -9,6 +9,7 @@ const CodeInputCard = ({
   input,
   setInput,
   onSubmit,
+  onVisualize,   // NEW: callback for visualize
   isLoading,
   language,
   setLanguage,
@@ -24,6 +25,18 @@ const CodeInputCard = ({
 
     if (input.trim()) {
       onSubmit(input);
+    }
+  };
+
+  const handleVisualize = () => {
+    if (isLoading) return;
+    if (!onVisualize) {
+      console.warn("onVisualize prop is not provided");
+      return;
+    }
+
+    if (input.trim()) {
+      onVisualize(input);
     }
   };
 
@@ -58,17 +71,30 @@ const CodeInputCard = ({
         disabled={isLoading}
       />
 
-      {/* Footer with line count and submit button */}
+      {/* Footer with line count and buttons */}
       <div className="flex items-center justify-between text-sm text-slate-500">
         <span>Lines: {lineCount}</span>
-        <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white flex gap-2 items-center disabled:opacity-50"
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          <CodeIcon className="w-4 h-4" />
-          {isLoading ? "Analyzing..." : "Analyze Code"}
-        </Button>
+        <div className="flex gap-2">
+          {/* NEW Visualize button */}
+          <Button
+            className="bg-pink-600 hover:bg-pink-700 text-white flex gap-2 items-center disabled:opacity-50"
+            onClick={handleVisualize}
+            disabled={isLoading}
+          >
+            <CodeIcon className="w-4 h-4" />
+            {isLoading ? "Processing..." : "Visualize"}
+          </Button>
+
+          {/* Existing Analyze button */}
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white flex gap-2 items-center disabled:opacity-50"
+            onClick={handleSubmit}
+            disabled={isLoading}
+          >
+            <CodeIcon className="w-4 h-4" />
+            {isLoading ? "Analyzing..." : "Analyze Code"}
+          </Button>
+        </div>
       </div>
     </div>
   );

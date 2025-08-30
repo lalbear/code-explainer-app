@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { explainCode } from '../services/api';
+import { explainCode, visualizeCode } from '../services/api';
 
 export default function CodeEditor({ setExplanation }) {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [visLoading, setVisLoading] = useState(false);
 
   const handleExplain = async () => {
     if (!code.trim()) return;
@@ -16,10 +17,38 @@ export default function CodeEditor({ setExplanation }) {
       console.error('Error explaining code:', error);
       setExplanation({
         success: false,
-        explanation: 'Sorry, there was an error explaining your code. Please try again.'
+        explanation:
+          'Sorry, there was an error explaining your code. Please try again.',
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const handleVisualize = async () => {
+    if (!code.trim()) return;
+
+    setVisLoading(true);
+    try {
+      const result = await visualizeCode(code); // { success, image, meta? }
+      if (result?.image) {
+        setExplanation({ success: true, image: result.image });
+      } else {
+        setExplanation({
+          success: false,
+          explanation: 'Visualization failed: no image returned.',
+        });
+      }
+    } catch (error) {
+      console.error('Error visualizing code:', error);
+      setExplanation({
+        success: false,
+        explanation:
+          'Sorry, there was an error generating the visualization. Please try again.',
+      });
+    } finally {
+      setVisLoading(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -77,16 +106,16 @@ export default function CodeEditor({ setExplanation }) {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="// Paste your code here and click 'Explain Code' to get a detailed explanation
+            placeholder={`// Paste your code here and click 'Explain Code' or 'Visualize' to get insights
 // Supports all programming languages: JavaScript, Python, C++, Java, and more!
 
 function example() {
   console.log('Hello, World!');
-}"
+}`}
             className="w-full h-80 p-4 bg-slate-50 border-2 border-slate-200 rounded-xl font-mono text-sm leading-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-slate-400"
             style={{ fontFamily: "'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace" }}
           />
-          
+
           {/* Line numbers effect */}
           <div className="absolute left-2 top-4 text-slate-400 text-sm font-mono leading-6 pointer-events-none select-none">
             {code.split('\n').map((_, index) => (
@@ -105,7 +134,7 @@ function example() {
             </svg>
             <span>Press Tab for indentation</span>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             {code.trim() && (
               <button
@@ -118,7 +147,36 @@ function example() {
                 <span>Clear</span>
               </button>
             )}
-            
+
+            {/* NEW: Visualize button */}
+            <button
+              onClick={handleVisualize}
+              disabled={visLoading || !code.trim()}
+              className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2 ${
+                visLoading || !code.trim()
+                  ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-pink-600 to-pink-700 text-white hover:from-pink-700 hover:to-pink-800 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+              }`}
+            >
+              {visLoading ? (
+                <>
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  <span>Visualizing...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4-4-4-4m8 8l4-4-4-4" />
+                  </svg>
+                  <span>Visualize</span>
+                </>
+              )}
+            </button>
+
+            {/* Existing: Explain Code button */}
             <button
               onClick={handleExplain}
               disabled={loading || !code.trim()}

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CodeIcon, Heart, Mail, Github } from "lucide-react";
 
 import { ThemeProvider } from "./context/ThemeContext";
-import { explainCode } from "./services/api";
+import { explainCode, visualizeCode } from "./services/api";
 
 import CodeInputCard from "./components/CodeInputCard";
 import ExplanationBubble from "./components/ExplanationBubble";
@@ -11,11 +11,12 @@ import ThemeToggle from "./components/ThemeToggle";
 
 function AppContent() {
   const [input, setInput] = useState("");
-  const [explanations, setExplanations] = useState([]);
+  const [explanations, setExplanations] = useState([]); // [{ text?, image?, timestamp }]
   const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState("cpp");
   const explanationRef = useRef(null);
 
+  // === Handle Explain (text only) ===
   const handleExplain = async (code) => {
     if (!code.trim()) return;
 
@@ -30,7 +31,7 @@ function AppContent() {
     } catch (error) {
       setExplanations((prev) => [
         ...prev,
-        { text: "Error: " + error.message },
+        { text: "Error: " + error.message, timestamp: Date.now() },
       ]);
     } finally {
       setIsLoading(false);
@@ -38,10 +39,47 @@ function AppContent() {
     }
   };
 
+  // === Handle Visualize (image + text) ===
+  const handleVisualize = async (code) => {
+  if (!code.trim()) return;
+
+  setIsLoading(true);
+  try {
+    const res = await visualizeCode(code, language); 
+    if (res?.image || res?.explanation) {
+      setExplanations((prev) => [
+        ...prev,
+        { image: res.image, text: res.explanation, timestamp: Date.now() },
+      ]);
+    } else {
+      setExplanations((prev) => [
+        ...prev,
+        { text: "Visualization failed: No image/explanation returned.", timestamp: Date.now() },
+      ]);
+    }
+  } catch (e) {
+    setExplanations((prev) => [
+      ...prev,
+      { text: "Visualization error: " + e.message, timestamp: Date.now() },
+    ]);
+  } finally {
+    setIsLoading(false);
+    setInput("");
+  }
+};
+
+
+  // === Clear all ===
   const handleClear = () => setExplanations([]);
 
+  // === Export only text (skip images) ===
   const handleExport = () => {
-    const blob = new Blob([explanations.map((e) => e.text).join("\n\n")], {
+    const textOnly = explanations
+      .map((e) => e.text)
+      .filter(Boolean)
+      .join("\n\n");
+
+    const blob = new Blob([textOnly || "No text explanations to export."], {
       type: "text/plain",
     });
     const url = URL.createObjectURL(blob);
@@ -74,18 +112,15 @@ function AppContent() {
         className="flex flex-col gap-4 p-4 pb-32 max-w-3xl mx-auto"
       >
         {explanations.length === 0 ? (
-          <p className="text-center text-slate-500 mt-16">
-            No explanations yet
-          </p>
+          <p className="text-center text-slate-500 mt-16">No explanations yet</p>
         ) : (
           explanations.map((exp, idx) => (
             <ExplanationBubble
-              key={exp.timestamp + idx}
+              key={`${exp.timestamp || 0}-${idx}`}
               explanation={exp.text}
+              image={exp.image}
               clearExplanation={() =>
-                setExplanations((prev) =>
-                  prev.filter((_, i) => i !== idx)
-                )
+                setExplanations((prev) => prev.filter((_, i) => i !== idx))
               }
             />
           ))
@@ -97,19 +132,20 @@ function AppContent() {
         input={input}
         setInput={setInput}
         onSubmit={handleExplain}
+        onVisualize={handleVisualize}
         isLoading={isLoading}
         language={language}
         setLanguage={setLanguage}
       />
 
       {/* Bottom Action Buttons */}
-      <FloatingActions 
-        onClear={handleClear} 
-        onExport={handleExport} 
+      <FloatingActions
+        onClear={handleClear}
+        onExport={handleExport}
         isDisabled={explanations.length === 0}
       />
 
-      {/* Contact Footer */}
+      {/* Footer */}
       <footer className="bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 mt-8">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -122,7 +158,7 @@ function AppContent() {
                 Pranjal Upadhyay
               </span>
             </div>
-            
+
             {/* Contact Links */}
             <div className="flex items-center gap-4">
               <a
@@ -133,7 +169,7 @@ function AppContent() {
                 <span className="hidden sm:inline">pranjalup25@gmail.com</span>
                 <span className="sm:hidden">Email</span>
               </a>
-              
+
               <a
                 href="https://github.com/lalbear"
                 target="_blank"
