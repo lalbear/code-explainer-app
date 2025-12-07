@@ -41,7 +41,7 @@ ${code}
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "meta-llama/llama-3.3-70b-instruct:free", // ✅ FIXED MODEL
+        model: "mistralai/mistral-small-3.1-24b-instruct:free", // ✅ FIXED MODEL
         messages: [{ role: "user", content: prompt }],
       },
       {
@@ -85,7 +85,7 @@ ${code}
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "google/gemini-2.5-flash-image-preview:free",
+        model: "google/gemini-2.5-flash-image-preview:free,
         messages: [
           { role: "system", content: system },
           { role: "user", content: user }
