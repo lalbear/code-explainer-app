@@ -41,7 +41,7 @@ ${code}
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "nvidia/nemotron-nano-9b-v2:free", // ✅ FIXED MODEL
+        model: "meta-llama/llama-3.3-70b-instruct:free", // ✅ FIXED MODEL
         messages: [{ role: "user", content: prompt }],
       },
       {
