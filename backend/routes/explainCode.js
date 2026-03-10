@@ -26,10 +26,16 @@ async function callOpenRouter(payload, { models = [], timeout = 30000, retries =
     let attempt = 0;
     while (attempt <= retries) {
       try {
+        if (!process.env.OPENROUTER_API_KEY) {
+          throw new Error("OPENROUTER_API_KEY is missing from environment variables.");
+        }
+
         const resp = await axios.post(baseUrl, body, {
           headers: {
             Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
             "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/lalbear/code-explainer-app", // Optional, for OpenRouter tracking
+            "X-Title": "Code Explainer App", // Optional, reveals your app to OpenRouter
           },
           timeout,
         });
@@ -80,10 +86,10 @@ ${code}
 
     // try fast, low-latency models first, then fall back
     const preferredModels = [
-      "nvidia/nemotron-3-nano-30b-a3b:free",
       "google/gemini-2.0-flash-exp:free",
       "meta-llama/llama-3.1-8b-instruct:free",
-      "mistralai/mistral-7b-instruct:free"
+      "mistralai/mistral-7b-instruct:free",
+      "openchat/openchat-7b:free"
     ];
 
     const { resp, modelUsed } = await callOpenRouter(
@@ -113,9 +119,10 @@ ${code}
         message: "Requested model is not available for your API key or current provider. Check OpenRouter dashboard or use a different model."
       });
     }
-    return res.status(500).json({
+    return res.status(error.message.includes("missing") ? 500 : 502).json({
       error: "AI error",
-      message: error?.response?.data || error.message,
+      message: error?.response?.data?.error?.message || error.message,
+      suggestion: "Check if OPENROUTER_API_KEY is set and valid. If using free models, you might be rate-limited (limit is often low if credits < $10)."
     });
   }
 });
