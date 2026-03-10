@@ -79,7 +79,7 @@ function App() {
         code: codeInput,
         language,
       });
-      setImage(response.data.image_url);
+      setImage(response.data.image);
       addToHistory(codeInput, "visualization");
     } catch (error) {
       console.error("Visualization Error:", error);
@@ -91,7 +91,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans selection:bg-brand/30 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans selection:bg-brand/30 selection:text-slate-900 dark:selection:text-white overflow-x-hidden transition-colors duration-300">
       {/* Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand/10 rounded-full blur-[120px] animate-pulse" />
@@ -117,7 +117,7 @@ function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-white leading-[0.9]"
+            className="text-5xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-slate-900 dark:text-white leading-[0.9]"
           >
             Decipher <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-indigo-400">Chaos</span>.
           </motion.h1>
@@ -126,7 +126,7 @@ function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
           >
             Advanced AI engine that transforms complex source code into human-readable logic and architectural blueprints.
           </motion.p>
@@ -137,13 +137,13 @@ function App() {
             transition={{ delay: 0.5 }}
             className="flex items-center justify-center gap-12 pt-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
           >
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
               <Shield className="w-4 h-4" /> Secure
             </div>
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
               <Zap className="w-4 h-4" /> Real-time
             </div>
-            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
               <Globe className="w-4 h-4" /> Universal
             </div>
           </motion.div>
@@ -173,6 +173,7 @@ function App() {
                   key={explanation || image || 'loading'}
                   explanation={explanation} 
                   image={image} 
+                  isLoading={isLoading}
                   isError={isError}
                   onClear={() => {
                     setExplanation("");
@@ -184,9 +185,9 @@ function App() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="h-[500px] rounded-[40px] border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 space-y-4 group"
+                  className="h-[500px] rounded-[40px] border-2 border-dashed border-slate-300 dark:border-white/5 flex flex-col items-center justify-center text-slate-500 dark:text-slate-600 space-y-4 group"
                 >
-                  <div className="p-6 rounded-full bg-slate-900 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                  <div className="p-6 rounded-full bg-slate-100 dark:bg-slate-900 shadow-inner group-hover:scale-110 transition-transform duration-500">
                     <ArrowDown className="w-8 h-8 opacity-20" />
                   </div>
                   <p className="text-sm font-medium tracking-wide">Analysis results will appear here</p>
@@ -202,18 +203,6 @@ function App() {
         onSelect={(code) => setInput(code)} 
         onClearHistory={handleClearHistory}
       />
-
-      <footer className="relative z-10 border-t border-white/5 py-12 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
-              <span className="text-white font-black text-sm">AE</span>
-            </div>
-            <span className="text-white font-bold tracking-tight">Antigravity Engine</span>
-          </div>
-          <p className="text-slate-500 text-sm">© 2024 Advanced Neural Systems. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }

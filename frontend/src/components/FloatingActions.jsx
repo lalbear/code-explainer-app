@@ -44,7 +44,7 @@ export default function FloatingActions({ history, onSelect, onClearHistory }) {
                   <button
                     key={index}
                     onClick={() => {
-                      onSelect(item.code);
+                      onSelect(item.fullCode);
                       setIsOpen(false);
                     }}
                     className="w-full text-left p-4 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all group"

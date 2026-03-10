@@ -9,9 +9,16 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 transition"
+      className="relative p-2 rounded-xl transition-all duration-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-700 group overflow-hidden"
+      aria-label="Toggle theme"
     >
-      {darkMode ? <Sun className="text-yellow-400" /> : <Moon className="text-gray-600" />}
+      <div className="relative z-10 flex items-center justify-center">
+        {darkMode ? (
+          <Moon className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
+        ) : (
+          <Sun className="w-5 h-5 text-amber-500 group-hover:text-amber-600 transition-colors" />
+        )}
+      </div>
     </button>
   );
 };

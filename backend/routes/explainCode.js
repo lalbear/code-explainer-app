@@ -69,14 +69,22 @@ router.post("/explain", validateCodeRequest, async (req, res) => {
     const { code, language = "cpp" } = req.body;
 
     const prompt = `
+# Deep Code Analysis
 Explain the following ${language} code with this structure:
 
-1. Provide a **clear, concise algorithm-style summary** of what the code does.
-   - Use step-by-step bullets.
-   - Highlight key terms like loops, functions, conditions, or important values in **bold**.
+## **Summary**
+Provide a clear, high-level summary of what the code achieves. Use a step-by-step bulleted list.
+- **Key Algorithms**: Mention any important logic.
+- **Data Structures**: Note any collections used.
+- **Complexity**: Briefly touch upon performance if relevant.
 
-2. Add a section header: **CODE EXPLANATION**
-   - Then explain the code line-by-line or block-by-block in simple language.
+## **Code Explanation**
+Explain the implementation details line-by-line or in logical blocks. Use simple, direct language.
+
+**Formatting Rules:**
+1. Use **bold** for key concepts, functions, and variables.
+2. Use \`inline code\` for technical identifiers.
+3. Be professional and encouraging.
 
 Here is the code:
 \`\`\`${language}

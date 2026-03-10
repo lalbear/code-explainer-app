@@ -7,7 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   return (
-    <header className="flex items-center justify-between px-8 py-5 sticky top-0 z-50 glass border-b border-white/10">
+    <header className="flex items-center justify-between px-8 py-5 sticky top-0 z-50 glass border-b border-slate-200 dark:border-white/10">
       <motion.div 
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
