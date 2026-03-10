@@ -86,10 +86,10 @@ ${code}
 
     // try fast, low-latency models first, then fall back
     const preferredModels = [
+      "openrouter/free", // Automatically routes to the best available free model
       "google/gemini-2.0-flash-exp:free",
       "meta-llama/llama-3.1-8b-instruct:free",
-      "mistralai/mistral-7b-instruct:free",
-      "openchat/openchat-7b:free"
+      "mistralai/mistral-7b-instruct:free"
     ];
 
     const { resp, modelUsed } = await callOpenRouter(
@@ -144,7 +144,8 @@ ${code}
 
     // image models (note: keep the quotes and string valid)
     const imageModels = [
-      "google/gemini-2.5-flash-image-preview:free"
+      "google/gemini-2.0-flash-exp:free", // Supports multimodality/output
+      "openrouter/free" // Fallback
     ];
 
     const payload = {
