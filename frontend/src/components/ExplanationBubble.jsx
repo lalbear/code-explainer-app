@@ -27,14 +27,17 @@ const loadPrism = async () => {
   }
 };
 
-export default function ExplanationBubble({ explanation, image, clearExplanation }) {
+export default function ExplanationBubble({ explanation, image, clearExplanation, isError }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [copying, setCopying] = useState(false);
 
   // --- IMAGE MODE ---
-  if (image) {
     return (
-      <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm transition">
+      <div className={`rounded-xl border p-6 space-y-4 shadow-sm transition ${
+        isError 
+          ? "border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20" 
+          : "border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900"
+      }`}>
         <div className="flex justify-center">
           <img
   src={image}
@@ -143,7 +146,11 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
   };
 
   return (
-    <div className="rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 space-y-4 shadow-sm transition">
+    <div className={`rounded-xl border p-6 space-y-4 shadow-sm transition ${
+      isError 
+        ? "border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20" 
+        : "border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900"
+    }`}>
       <div
         className="prose dark:prose-invert max-w-none prose-pre:bg-transparent prose-headings:text-blue-700 dark:prose-headings:text-blue-300"
         dangerouslySetInnerHTML={{ __html: displayedHtml }}

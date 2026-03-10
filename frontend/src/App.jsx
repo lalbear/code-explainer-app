@@ -26,12 +26,12 @@ function AppContent() {
       const data = response?.explanation || "Explanation unavailable.";
       setExplanations((prev) => [
         ...prev,
-        { text: data, timestamp: Date.now() },
+        { text: data, timestamp: Date.now(), isError: false },
       ]);
     } catch (error) {
       setExplanations((prev) => [
         ...prev,
-        { text: "Error: " + error.message, timestamp: Date.now() },
+        { text: error.message, timestamp: Date.now(), isError: true },
       ]);
     } finally {
       setIsLoading(false);
@@ -49,18 +49,18 @@ function AppContent() {
     if (res?.image || res?.explanation) {
       setExplanations((prev) => [
         ...prev,
-        { image: res.image, text: res.explanation, timestamp: Date.now() },
+        { image: res.image, text: res.explanation, timestamp: Date.now(), isError: false },
       ]);
     } else {
       setExplanations((prev) => [
         ...prev,
-        { text: "Visualization failed: No image/explanation returned.", timestamp: Date.now() },
+        { text: "Visualization failed: No image/explanation returned.", timestamp: Date.now(), isError: true },
       ]);
     }
   } catch (e) {
     setExplanations((prev) => [
       ...prev,
-      { text: "Visualization error: " + e.message, timestamp: Date.now() },
+      { text: e.message, timestamp: Date.now(), isError: true },
     ]);
   } finally {
     setIsLoading(false);
@@ -122,6 +122,7 @@ function AppContent() {
               key={`${exp.timestamp || 0}-${idx}`}
               explanation={exp.text}
               image={exp.image}
+              isError={exp.isError}
               clearExplanation={() =>
                 setExplanations((prev) => prev.filter((_, i) => i !== idx))
               }
