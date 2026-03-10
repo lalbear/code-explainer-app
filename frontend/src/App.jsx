@@ -9,7 +9,7 @@ import ExplanationBubble from "./components/ExplanationBubble";
 import FloatingActions from "./components/FloatingActions";
 import { Sparkles, ArrowDown, Shield, Zap, Globe } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 function App() {
   const [input, setInput] = useState("");

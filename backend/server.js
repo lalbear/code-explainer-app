@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (Vercel)
 
 // Optional: Import rate limiter middleware
 const rateLimiter = require("./middleware/rateLimiter");
