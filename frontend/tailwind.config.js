@@ -45,6 +45,7 @@ export default {
         'premium': '0 0 50px -12px rgba(124, 58, 237, 0.3)',
         'glass': 'inset 0 0 0 1px rgba(255, 255, 255, 0.08)',
         'glass-active': 'inset 0 0 0 1px rgba(255, 255, 255, 0.2)',
+        'glow': '0 0 50px -12px rgba(124, 58, 237, 0.5)',
       }
     },
   },
