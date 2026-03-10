@@ -10,10 +10,7 @@ const rateLimiter = require("./middleware/rateLimiter");
 
 // === MIDDLEWARE ===
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || "http://localhost:3000",
-    "https://code-explainer-app-5kgp.vercel.app" // Add your frontend URL directly
-  ],
+  origin: "*", // Use wildcard for all origins in production, or specify your URLs
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
 }));

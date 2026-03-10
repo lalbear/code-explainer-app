@@ -1,3 +1,80 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased text-slate-100 bg-slate-950;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    @apply font-bold tracking-tight;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-3xl border border-white/[0.08] shadow-2xl;
+  }
+
+  .glass-card {
+    @apply glass rounded-[32px] p-8 transition-all duration-700 hover:border-white/20 hover:bg-white/[0.05];
+  }
+
+  .glass-premium {
+    @apply relative overflow-hidden bg-slate-950/40 backdrop-blur-2xl border border-white/10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)];
+  }
+
+  .glass-input {
+    @apply bg-slate-950/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 focus:border-brand/40 transition-all focus:ring-1 focus:ring-brand/30 outline-none;
+  }
+
+  .premium-button {
+    @apply relative overflow-hidden rounded-2xl px-8 py-4 font-bold transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-xs;
+  }
+
+  .premium-button-primary {
+    @apply premium-button bg-brand text-white shadow-[0_10px_20px_-5px_rgba(124,58,237,0.4)] hover:shadow-[0_20px_40px_-10px_rgba(124,58,237,0.6)] hover:brightness-110 active:shadow-inner;
+  }
+
+  .premium-button-secondary {
+    @apply premium-button glass bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20;
+  }
+
+  .brand-gradient {
+    @apply bg-gradient-to-br from-brand via-indigo-500 to-blue-600;
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-950;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+}

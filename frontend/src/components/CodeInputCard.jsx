@@ -1,106 +1,101 @@
 // src/components/CodeInputCard.jsx
 
 import React from "react";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
-import { CodeIcon, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Code2, Zap, Layers, Cpu, Terminal } from "lucide-react";
 
-const CodeInputCard = ({
-  input,
-  setInput,
-  onSubmit,
-  onVisualize,   // NEW: callback for visualize
-  isLoading,
-  language,
-  setLanguage,
-}) => {
-  const lineCount = input ? input.split("\n").length : 1;
-
-  const handleSubmit = () => {
-    if (isLoading) return;
-    if (!onSubmit) {
-      console.warn("onSubmit prop is not provided");
-      return;
-    }
-
-    if (input.trim()) {
-      onSubmit(input);
-    }
-  };
-
-  const handleVisualize = () => {
-    if (isLoading) return;
-    if (!onVisualize) {
-      console.warn("onVisualize prop is not provided");
-      return;
-    }
-
-    if (input.trim()) {
-      onVisualize(input);
-    }
-  };
+export default function CodeInputCard({ onSubmit, onVisualize, isLoading, language, setLanguage, input, setInput }) {
+  const languages = [
+    { value: "javascript", label: "JavaScript" },
+    { value: "python", label: "Python" },
+    { value: "cpp", label: "C++" },
+    { value: "go", label: "Go" },
+    { value: "rust", label: "Rust" },
+  ];
 
   return (
-    <div className="bg-muted dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-sm p-4 space-y-4 max-w-3xl mx-auto mt-6">
-      {/* Header with title and language selector */}
-      <div className="flex justify-between items-center">
-        <div className="text-xl font-semibold flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-pink-500" />
-          Code Input
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-premium p-8 rounded-[40px] border-white/10 shadow-glow overflow-hidden relative group"
+    >
+      {/* Decorative Background Element */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-brand/5 rounded-full blur-3xl -mr-32 -mt-32 group-hover:bg-brand/10 transition-colors duration-700" />
+      
+      <div className="flex flex-col gap-8 relative z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-bold font-display flex items-center gap-3">
+              <Terminal className="text-brand w-6 h-6" />
+              Source Architect
+            </h2>
+            <p className="text-slate-400 text-sm">Design and analyze your algorithms with AI</p>
+          </div>
+          
+          <div className="flex items-center bg-slate-900/50 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
+            {languages.map((lang) => (
+              <button
+                key={lang.value}
+                onClick={() => setLanguage(lang.value)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  language === lang.value 
+                    ? "bg-brand text-white shadow-lg shadow-brand/20 scale-105" 
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <select
-          className="text-sm px-2 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200"
-          value={language}
-          onChange={(e) => setLanguage && setLanguage(e.target.value)}
-        >
-          <option value="python">Python</option>
-          <option value="cpp">C++</option>
-          <option value="java">Java</option>
-          <option value="js">JavaScript</option>
-          <option value="ts">TypeScript</option>
-          <option value="go">Go</option>
-          <option value="rust">Rust</option>
-        </select>
-      </div>
-
-      {/* Text area for code input */}
-      <Textarea
-        placeholder="Paste your code here..."
-        rows={12}
-        className="w-full font-mono resize-none"
-        value={input}
-        onChange={(e) => setInput && setInput(e.target.value)}
-        disabled={isLoading}
-      />
-
-      {/* Footer with line count and buttons */}
-      <div className="flex items-center justify-between text-sm text-slate-500">
-        <span>Lines: {lineCount}</span>
-        <div className="flex gap-2">
-          {/* NEW Visualize button */}
-          <Button
-            className="bg-pink-600 hover:bg-pink-700 text-white flex gap-2 items-center disabled:opacity-50"
-            onClick={handleVisualize}
+        <div className="relative group/textarea">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="// Paste your complex code here for deep architectural analysis..."
             disabled={isLoading}
-          >
-            <CodeIcon className="w-4 h-4" />
-            {isLoading ? "Processing..." : "Visualize"}
-          </Button>
+            className="w-full h-80 bg-black/40 border border-white/10 rounded-3xl p-6 text-slate-300 font-mono text-sm focus:ring-2 focus:ring-brand/40 focus:border-brand/40 transition-all resize-none outline-none group-hover/textarea:border-white/20"
+          />
+          <div className="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none opacity-0 group-focus-within/textarea:opacity-100 transition-opacity">
+            <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold bg-slate-800/80 px-2 py-1 rounded">
+              Input Mode: {language}
+            </span>
+          </div>
+        </div>
 
-          {/* Existing Analyze button */}
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white flex gap-2 items-center disabled:opacity-50"
-            onClick={handleSubmit}
-            disabled={isLoading}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={() => onSubmit(input)}
+            disabled={isLoading || !input}
+            className="flex-1 btn-primary py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-3 group/btn"
           >
-            <CodeIcon className="w-4 h-4" />
-            {isLoading ? "Analyzing..." : "Analyze Code"}
-          </Button>
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Zap className="w-5 h-5 group-hover/btn:animate-pulse" />
+                Analyze Architecture
+              </>
+            )}
+          </button>
+          
+          <button
+            onClick={() => onVisualize(input)}
+            disabled={isLoading || !input}
+            className="flex-1 btn-secondary py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-3"
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-brand/30 border-t-brand rounded-full animate-spin" />
+            ) : (
+              <>
+                <Layers className="w-5 h-5" />
+                Visualize Logic
+              </>
+            )}
+          </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
-};
-
-export default CodeInputCard;
+}

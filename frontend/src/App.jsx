@@ -1,201 +1,221 @@
-import React, { useEffect, useRef, useState } from "react";
-import { CodeIcon, Heart, Mail, Github } from "lucide-react";
+// src/App.jsx
 
-import { ThemeProvider } from "./context/ThemeContext";
-import { explainCode, visualizeCode } from "./services/api";
-
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import Header from "./components/Header";
 import CodeInputCard from "./components/CodeInputCard";
 import ExplanationBubble from "./components/ExplanationBubble";
 import FloatingActions from "./components/FloatingActions";
-import ThemeToggle from "./components/ThemeToggle";
+import { Sparkles, ArrowDown, Shield, Zap, Globe } from "lucide-react";
 
-function AppContent() {
+const API_BASE_URL = "http://localhost:5001";
+
+function App() {
   const [input, setInput] = useState("");
-  const [explanations, setExplanations] = useState([]); // [{ text?, image?, timestamp }]
+  const [language, setLanguage] = useState("javascript");
+  const [explanation, setExplanation] = useState("");
+  const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState("cpp");
-  const explanationRef = useRef(null);
+  const [isError, setIsError] = useState(false);
+  const [history, setHistory] = useState([]);
 
-  // === Handle Explain (text only) ===
-  const handleExplain = async (code) => {
-    if (!code.trim()) return;
+  // Load history from localStorage
+  useEffect(() => {
+    const savedHistory = localStorage.getItem("code_analysis_history");
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
+    }
+  }, []);
 
+  // Save history to localStorage
+  useEffect(() => {
+    localStorage.setItem("code_analysis_history", JSON.stringify(history));
+  }, [history]);
+
+  const addToHistory = (code, type) => {
+    const newItem = {
+      code: code.substring(0, 50) + (code.length > 50 ? "..." : ""),
+      fullCode: code,
+      type,
+      timestamp: new Date().toISOString(),
+    };
+    setHistory((prev) => [newItem, ...prev].slice(0, 10)); // Keep last 10
+  };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem("code_analysis_history");
+  };
+
+  const explainCode = async (codeInput) => {
     setIsLoading(true);
+    setIsError(false);
+    setExplanation("");
+    setImage("");
     try {
-      const response = await explainCode(code, language);
-      const data = response?.explanation || "Explanation unavailable.";
-      setExplanations((prev) => [
-        ...prev,
-        { text: data, timestamp: Date.now(), isError: false },
-      ]);
+      const response = await axios.post(`${API_BASE_URL}/api/explain`, {
+        code: codeInput,
+        language,
+      });
+      setExplanation(response.data.explanation);
+      addToHistory(codeInput, "explanation");
     } catch (error) {
-      setExplanations((prev) => [
-        ...prev,
-        { text: error.message, timestamp: Date.now(), isError: true },
-      ]);
+      console.error("Explanation Error:", error);
+      setIsError(true);
+      setExplanation(error.response?.data?.error || "Neural link failed. Please check your connection.");
     } finally {
       setIsLoading(false);
-      setInput(""); // clear input
     }
   };
 
-  // === Handle Visualize (image + text) ===
-  const handleVisualize = async (code) => {
-  if (!code.trim()) return;
-
-  setIsLoading(true);
-  try {
-    const res = await visualizeCode(code, language); 
-    if (res?.image || res?.explanation) {
-      setExplanations((prev) => [
-        ...prev,
-        { image: res.image, text: res.explanation, timestamp: Date.now(), isError: false },
-      ]);
-    } else {
-      setExplanations((prev) => [
-        ...prev,
-        { text: "Visualization failed: No image/explanation returned.", timestamp: Date.now(), isError: true },
-      ]);
+  const visualizeCode = async (codeInput) => {
+    setIsLoading(true);
+    setIsError(false);
+    setImage("");
+    setExplanation("");
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/visualize`, {
+        code: codeInput,
+        language,
+      });
+      setImage(response.data.image_url);
+      addToHistory(codeInput, "visualization");
+    } catch (error) {
+      console.error("Visualization Error:", error);
+      setIsError(true);
+      setExplanation(error.response?.data?.error || "Visualization core offline. Retry recommended.");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (e) {
-    setExplanations((prev) => [
-      ...prev,
-      { text: e.message, timestamp: Date.now(), isError: true },
-    ]);
-  } finally {
-    setIsLoading(false);
-    setInput("");
-  }
-};
-
-
-  // === Clear all ===
-  const handleClear = () => setExplanations([]);
-
-  // === Export all as formatted text ===
-  const handleExport = () => {
-    if (explanations.length === 0) return;
-
-    const formattedOutput = explanations
-      .map((e, idx) => {
-        const header = `--- Explanation ${idx + 1} (${new Date(e.timestamp).toLocaleString()}) ---\n`;
-        return header + (e.text || "No text provided.") + (e.image ? "\n[Note: This explanation had a visualization image]" : "");
-      })
-      .join("\n\n" + "=".repeat(20) + "\n\n");
-
-    const blob = new Blob([formattedOutput], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `code_explanations_${new Date().toISOString().split("T")[0]}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
   };
-
-  useEffect(() => {
-    if (explanationRef.current) {
-      explanationRef.current.scrollTop = explanationRef.current.scrollHeight;
-    }
-  }, [explanations]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0f172a] transition-colors duration-300 text-black dark:text-white relative">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 shadow-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur">
-        <div className="flex items-center gap-2 font-bold text-xl">
-          <CodeIcon className="w-6 h-6 text-indigo-500" />
-          CodeExplainer
-        </div>
-        <ThemeToggle />
-      </header>
+    <div className="min-h-screen bg-slate-950 font-sans selection:bg-brand/30 selection:text-white overflow-x-hidden">
+      {/* Background Orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
 
-      {/* Explanations List */}
-      <main
-        ref={explanationRef}
-        className="flex flex-col gap-4 p-4 pb-32 max-w-3xl mx-auto"
-      >
-        {explanations.length === 0 ? (
-          <p className="text-center text-slate-500 mt-16">No explanations yet</p>
-        ) : (
-          explanations.map((exp, idx) => (
-            <ExplanationBubble
-              key={`${exp.timestamp || 0}-${idx}`}
-              explanation={exp.text}
-              image={exp.image}
-              isError={exp.isError}
-              clearExplanation={() =>
-                setExplanations((prev) => prev.filter((_, i) => i !== idx))
-              }
+      <Header />
+
+      <main className="relative z-10 pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-20 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-bold tracking-[0.2em] uppercase"
+          >
+            <Sparkles className="w-4 h-4" />
+            Next-Gen Neural Diagnostics
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-white leading-[0.9]"
+          >
+            Decipher <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-indigo-400">Chaos</span>.
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
+          >
+            Advanced AI engine that transforms complex source code into human-readable logic and architectural blueprints.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-12 pt-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+          >
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+              <Shield className="w-4 h-4" /> Secure
+            </div>
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+              <Zap className="w-4 h-4" /> Real-time
+            </div>
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-400">
+              <Globe className="w-4 h-4" /> Universal
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 px-4 mb-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand">Interface Active</span>
+            </div>
+            <CodeInputCard 
+              onSubmit={explainCode} 
+              onVisualize={visualizeCode} 
+              isLoading={isLoading} 
+              language={language}
+              setLanguage={setLanguage}
+              input={input}
+              setInput={setInput}
             />
-          ))
-        )}
+          </div>
+
+          <div className="space-y-6 lg:sticky lg:top-32">
+            <AnimatePresence mode="wait">
+              {(explanation || image || isLoading) ? (
+                <ExplanationBubble 
+                  key={explanation || image || 'loading'}
+                  explanation={explanation} 
+                  image={image} 
+                  isError={isError}
+                  onClear={() => {
+                    setExplanation("");
+                    setImage("");
+                    setIsError(false);
+                  }}
+                />
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="h-[500px] rounded-[40px] border-2 border-dashed border-white/5 flex flex-col items-center justify-center text-slate-600 space-y-4 group"
+                >
+                  <div className="p-6 rounded-full bg-slate-900 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <ArrowDown className="w-8 h-8 opacity-20" />
+                  </div>
+                  <p className="text-sm font-medium tracking-wide">Analysis results will appear here</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </main>
 
-      {/* Code Input Section */}
-      <CodeInputCard
-        input={input}
-        setInput={setInput}
-        onSubmit={handleExplain}
-        onVisualize={handleVisualize}
-        isLoading={isLoading}
-        language={language}
-        setLanguage={setLanguage}
+      <FloatingActions 
+        history={history} 
+        onSelect={(code) => setInput(code)} 
+        onClearHistory={handleClearHistory}
       />
 
-      {/* Bottom Action Buttons */}
-      <FloatingActions
-        onClear={handleClear}
-        onExport={handleExport}
-        isDisabled={explanations.length === 0}
-      />
-
-      {/* Footer */}
-      <footer className="bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 mt-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            {/* Developer Info */}
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <span>Developed with</span>
-              <Heart className="w-4 h-4 text-red-500 fill-current" />
-              <span>by</span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">
-                Pranjal Upadhyay
-              </span>
+      <footer className="relative z-10 border-t border-white/5 py-12 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
+              <span className="text-white font-black text-sm">AE</span>
             </div>
-
-            {/* Contact Links */}
-            <div className="flex items-center gap-4">
-              <a
-                href="mailto:pranjalup25@gmail.com"
-                className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                <Mail className="w-4 h-4" />
-                <span className="hidden sm:inline">pranjalup25@gmail.com</span>
-                <span className="sm:hidden">Email</span>
-              </a>
-
-              <a
-                href="https://github.com/lalbear"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
-              >
-                <Github className="w-4 h-4" />
-                <span className="hidden sm:inline">lalbear</span>
-                <span className="sm:hidden">GitHub</span>
-              </a>
-            </div>
+            <span className="text-white font-bold tracking-tight">Antigravity Engine</span>
           </div>
+          <p className="text-slate-500 text-sm">© 2024 Advanced Neural Systems. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 }
 
-export default function App() {
-  return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
-  );
-}
+export default App;
