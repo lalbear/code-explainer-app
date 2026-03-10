@@ -2,41 +2,40 @@
 
 **Unlock Code Clarity. Accelerate Learning Instantly.**
 
-An AI-powered application designed to deconstruct complex code snippets and provide intuitive, human-readable explanations. Whether you're a student learning a new language or a senior developer auditing a legacy codebase, Code Explainer de-mystifies the syntax.
+An AI-powered application that deconstructs complex code snippets and delivers intuitive, human-readable explanations. Whether you're a student tackling a new language or a senior developer auditing a legacy codebase, CodeExplainer.ai de-mystifies the syntax.
 
 ---
 
 ## ✨ Key Features
 
-### 🛠️ Advanced Code Editor
-- **Line Numbers**: Reference specific lines easily with integrated numbering.
-- **Multi-Language Support**: Full syntax highlighting for **JavaScript**, **TypeScript**, **Python**, **Go**, **Rust**, and **Shell**.
-- **Real-time Sanitization**: Safe code rendering to prevent XSS.
+### 🛠️ Advanced Code Input
+- **Multi-Language Support**: Switch between **JavaScript**, **Python**, **C++**, **Go**, and **Rust**.
+- **Typewriter Effect**: AI responses animate in with a streaming typewriter feel.
 
 ### 🤖 AI-Driven Insights
-- **In-Depth Analysis**: Uses advanced LLMs via OpenRouter to explain logic, time complexity, and edge cases.
-- **Streaming UI**: Watch as the AI "thinks" and types the explanation in real-time.
+- **In-Depth Analysis**: Uses LLMs via OpenRouter (Gemini 2.0 Flash, Llama 3.1, Mistral with automatic fallback) to explain logic, algorithms, and data structures.
+- **Code Visualization**: Generates architectural flow diagrams from your code.
 
 ### 📤 Export & Utility
-- **Copy to Clipboard**: Instant copying of markdown explanations with one click.
-- **Export as File**: Download individual explanations as `.txt` files.
-- **Global Data Export**: Export your entire session history with timestamps and sequence numbers.
-- **Session Persistence**: Keep track of multiple snippets in a clean, scrollable timeline.
+- **Copy to Clipboard**: One-click copying of the full AI explanation.
+- **Session History**: Last 10 snippets persisted in `localStorage` with fast restore.
+- **Dark / Light Mode**: System-aware theme toggle.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React.js**: Modern component-based UI.
-- **Vite**: Ultra-fast build tool and dev server.
-- **Tailwind CSS**: Utility-first styling with high craft.
-- **Prism.js**: Robust syntax highlighting engine.
-- **Radix UI Icons**: Premium iconography for tool actions.
+- **React.js**: Modern component-based UI with hooks.
+- **Vite**: Ultra-fast build tool and dev server (port `3000`).
+- **Tailwind CSS**: Utility-first styling with glassmorphism design.
+- **Framer Motion**: Smooth animations and transitions.
+- **Lucide React**: Icon set.
+- **React Markdown**: Renders AI responses as formatted markdown.
 
 ### Backend
-- **Node.js & Express**: High-performance API server.
-- **Axios**: Secure and efficient HTTP requests.
+- **Node.js & Express**: High-performance API server (port `5050`).
+- **Axios**: HTTP client for OpenRouter API calls.
 - **Dotenv**: Secure environment variable management.
 - **CORS & Rate Limiting**: Production-grade security and abuse protection.
 
@@ -45,8 +44,8 @@ An AI-powered application designed to deconstruct complex code snippets and prov
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v16.x or higher)
-- npm or yarn
+- [Node.js](https://nodejs.org/) (v18.x or higher)
+- npm
 
 ### Installation
 
@@ -56,14 +55,11 @@ An AI-powered application designed to deconstruct complex code snippets and prov
    cd code-explainer-app
    ```
 
-2. **Install Root & Sub-project Dependencies:**
+2. **Install Dependencies:**
    ```bash
-   # Root (if applicable)
-   npm install
-   
    # Frontend
    cd frontend && npm install
-   
+
    # Backend
    cd ../backend && npm install
    ```
@@ -72,9 +68,11 @@ An AI-powered application designed to deconstruct complex code snippets and prov
 
 Create a `.env` file in the `backend/` directory:
 ```env
-PORT=5000
+PORT=5050
 OPENROUTER_API_KEY=your_key_here
 ```
+
+Get a free API key at [openrouter.ai](https://openrouter.ai).
 
 ---
 
@@ -94,7 +92,7 @@ OPENROUTER_API_KEY=your_key_here
    npm run dev
    ```
 
-3. Open [http://localhost:5173](http://localhost:5173) in your browser.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
@@ -102,23 +100,28 @@ OPENROUTER_API_KEY=your_key_here
 
 ```text
 code-explainer-app/
-├── backend/            # Express API Server
-│   ├── index.js        # Main entry point
-│   ├── controllers/    # API Logic
-│   └── routes/         # Endpoint definitions
-├── frontend/           # React App (Vite)
+├── backend/                  # Express API Server
+│   ├── server.js             # Main entry point
+│   ├── middleware/           # Rate limiter & request validation
+│   └── routes/
+│       └── explainCode.js    # /api/explain & /api/visualize endpoints
+├── frontend/                 # React App (Vite)
 │   ├── src/
-│   │   ├── components/ # UI Components (Editor, Bubbles)
-│   │   ├── App.jsx     # Main Dashboard Logic
-│   │   └── index.css   # Global Styles (Tailwind)
-├── README.md           # Project Documentation
-└── package.json        # Root workspace config
+│   │   ├── components/       # Header, CodeInputCard, ExplanationBubble, FloatingActions, ThemeToggle
+│   │   ├── context/
+│   │   │   └── ThemeContext.jsx  # Dark/light mode state
+│   │   ├── services/         # API helpers
+│   │   ├── App.jsx           # Main application logic
+│   │   └── index.css         # Global Tailwind styles
+│   └── vite.config.js        # Vite + proxy config
+├── README.md
+└── package.json
 ```
 
 ---
 
 ## 🤝 Contributing
-Contributions are welcome! If you'd like to improve syntax highlighting or add support for more languages, please open a PR.
+Contributions are welcome! If you'd like to add language support, improve visualizations, or enhance the UI, please open a PR.
 
 ## 📝 License
 This project is licensed under the [MIT License](LICENSE).
