@@ -32,6 +32,7 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
   const [copying, setCopying] = useState(false);
 
   // --- IMAGE MODE ---
+  if (image) {
     return (
       <div className={`rounded-xl border p-6 space-y-4 shadow-sm transition ${
         isError 
