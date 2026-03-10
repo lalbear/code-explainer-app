@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DownloadIcon, TrashIcon } from "@radix-ui/react-icons";
+import { DownloadIcon, TrashIcon, CopyIcon, CheckIcon } from "@radix-ui/react-icons";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import ImageViewerModal from "./ImageViewerModal"; // ✅ import your modal
@@ -13,8 +13,11 @@ const loadPrism = async () => {
     await import("prismjs/components/prism-clike");
     await import("prismjs/components/prism-markup");
     await import("prismjs/components/prism-javascript");
+    await import("prismjs/components/prism-typescript");
     await import("prismjs/components/prism-cpp");
     await import("prismjs/components/prism-python");
+    await import("prismjs/components/prism-go");
+    await import("prismjs/components/prism-rust");
     await import("prismjs/themes/prism-tomorrow.css");
     Prism = prismModule.default;
     return Prism;
@@ -25,7 +28,8 @@ const loadPrism = async () => {
 };
 
 export default function ExplanationBubble({ explanation, image, clearExplanation }) {
-  const [modalOpen, setModalOpen] = useState(false); // ✅ track modal state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [copying, setCopying] = useState(false);
 
   // --- IMAGE MODE ---
   if (image) {
@@ -97,15 +101,6 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
           clearInterval(interval);
           setDisplayedHtml(cleanHtml);
           setTypingDone(true);
-
-          setTimeout(async () => {
-            try {
-              const PrismInstance = await loadPrism();
-              if (PrismInstance) PrismInstance.highlightAll();
-            } catch (err) {
-              console.warn("Prism highlighting failed:", err);
-            }
-          }, 100);
         }
       }, 5);
 
@@ -117,6 +112,16 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
     }
   }, [explanation]);
 
+  useEffect(() => {
+    if (typingDone) {
+      const highlight = async () => {
+        const PrismInstance = await loadPrism();
+        if (PrismInstance) PrismInstance.highlightAll();
+      };
+      highlight();
+    }
+  }, [typingDone]);
+
   const handleExport = () => {
     const blob = new Blob([explanation || ""], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -124,6 +129,17 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
     link.download = "code_explanation.txt";
     link.href = url;
     link.click();
+  };
+
+  const handleCopy = async () => {
+    if (copying) return;
+    try {
+      await navigator.clipboard.writeText(explanation || "");
+      setCopying(true);
+      setTimeout(() => setCopying(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
   };
 
   return (
@@ -134,7 +150,14 @@ export default function ExplanationBubble({ explanation, image, clearExplanation
       />
       {!typingDone && <span className="animate-pulse text-pink-500 ml-1">|</span>}
 
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end gap-3 flex-wrap">
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition"
+        >
+          {copying ? <CheckIcon className="w-4 h-4" /> : <CopyIcon className="w-4 h-4" />}
+          {copying ? "Copied!" : "Copy"}
+        </button>
         <button
           onClick={handleExport}
           className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition"

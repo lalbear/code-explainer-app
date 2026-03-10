@@ -58,6 +58,9 @@ const CodeInputCard = ({
           <option value="cpp">C++</option>
           <option value="java">Java</option>
           <option value="js">JavaScript</option>
+          <option value="ts">TypeScript</option>
+          <option value="go">Go</option>
+          <option value="rust">Rust</option>
         </select>
       </div>
 

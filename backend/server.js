@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 
 // Optional: Import rate limiter middleware
-// const rateLimiter = require("./middleware/rateLimiter");
+const rateLimiter = require("./middleware/rateLimiter");
 
 // === MIDDLEWARE ===
 app.use(cors({
@@ -19,7 +19,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-// app.use(rateLimiter); // Uncomment if you want rate limiting
+app.use(rateLimiter); // Uncomment if you want rate limiting
 
 // === HEALTH CHECK ===
 app.get("/health", (req, res) => {

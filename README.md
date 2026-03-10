@@ -1,93 +1,124 @@
-# 🚀 CODE-EXPLAINER-APP
+# 🚀 Code Explainer App
 
-_Unlock Code Clarity. Accelerate Learning Instantly._
+**Unlock Code Clarity. Accelerate Learning Instantly.**
 
-![Repo Size](https://img.shields.io/github/repo-size/lalbear/code-explainer-app)
-![Top Language](https://img.shields.io/github/languages/top/lalbear/code-explainer-app)
-![Languages Count](https://img.shields.io/github/languages/count/lalbear/code-explainer-app)
-
-_Built with the tools and technologies:_
-
-![Backend](https://img.shields.io/badge/Ex-Express.js-black)
-![JSON](https://img.shields.io/badge/JSON-lightgrey)
-![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown)
-![OpenRouter](https://img.shields.io/badge/API-OpenRouter-blueviolet)
-![React](https://img.shields.io/badge/Frontend-React.js-61dafb)
-![ENV](https://img.shields.io/badge/ENV-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-f7df1e)
-![Vite](https://img.shields.io/badge/Vite-646cff)
-![ESLint](https://img.shields.io/badge/Linter-ESLint-purple)
-![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white)
+An AI-powered application designed to deconstruct complex code snippets and provide intuitive, human-readable explanations. Whether you're a student learning a new language or a senior developer auditing a legacy codebase, Code Explainer de-mystifies the syntax.
 
 ---
 
-## 📚 Table of Contents
+## ✨ Key Features
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
+### 🛠️ Advanced Code Editor
+- **Line Numbers**: Reference specific lines easily with integrated numbering.
+- **Multi-Language Support**: Full syntax highlighting for **JavaScript**, **TypeScript**, **Python**, **Go**, **Rust**, and **Shell**.
+- **Real-time Sanitization**: Safe code rendering to prevent XSS.
+
+### 🤖 AI-Driven Insights
+- **In-Depth Analysis**: Uses advanced LLMs via OpenRouter to explain logic, time complexity, and edge cases.
+- **Streaming UI**: Watch as the AI "thinks" and types the explanation in real-time.
+
+### 📤 Export & Utility
+- **Copy to Clipboard**: Instant copying of markdown explanations with one click.
+- **Export as File**: Download individual explanations as `.txt` files.
+- **Global Data Export**: Export your entire session history with timestamps and sequence numbers.
+- **Session Persistence**: Keep track of multiple snippets in a clean, scrollable timeline.
 
 ---
 
-## 📌 Overview
+## 🛠️ Tech Stack
 
-Code Explainer App helps developers understand code instantly by providing detailed, AI-powered explanations. Just paste your code, and get insights in seconds.
+### Frontend
+- **React.js**: Modern component-based UI.
+- **Vite**: Ultra-fast build tool and dev server.
+- **Tailwind CSS**: Utility-first styling with high craft.
+- **Prism.js**: Robust syntax highlighting engine.
+- **Radix UI Icons**: Premium iconography for tool actions.
+
+### Backend
+- **Node.js & Express**: High-performance API server.
+- **Axios**: Secure and efficient HTTP requests.
+- **Dotenv**: Secure environment variable management.
+- **CORS & Rate Limiting**: Production-grade security and abuse protection.
 
 ---
 
 ## 🚀 Getting Started
 
-### ✅ Prerequisites
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16.x or higher)
+- npm or yarn
 
-Make sure you have the following installed:
+### Installation
 
-- **Programming Language**: JavaScript (Node.js environment)
-- **Package Manager**: npm
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/lalbear/code-explainer-app.git
+   cd code-explainer-app
+   ```
 
----
+2. **Install Root & Sub-project Dependencies:**
+   ```bash
+   # Root (if applicable)
+   npm install
+   
+   # Frontend
+   cd frontend && npm install
+   
+   # Backend
+   cd ../backend && npm install
+   ```
 
-### ⚙️ Installation
+### Configuration
 
-Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/lalbear/code-explainer-app.git
-cd code-explainer-app
-npm install
+Create a `.env` file in the `backend/` directory:
+```env
+PORT=5000
+OPENROUTER_API_KEY=your_key_here
 ```
 
 ---
 
-### ▶️ Usage
+## ▶️ Running the App
 
-Start the development server:
+### Development Mode
 
-```bash
-npm start
+1. **Start the Backend:**
+   ```bash
+   cd backend
+   npm start
+   ```
+
+2. **Start the Frontend:**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## 🗺️ Project Structure
+
+```text
+code-explainer-app/
+├── backend/            # Express API Server
+│   ├── index.js        # Main entry point
+│   ├── controllers/    # API Logic
+│   └── routes/         # Endpoint definitions
+├── frontend/           # React App (Vite)
+│   ├── src/
+│   │   ├── components/ # UI Components (Editor, Bubbles)
+│   │   ├── App.jsx     # Main Dashboard Logic
+│   │   └── index.css   # Global Styles (Tailwind)
+├── README.md           # Project Documentation
+└── package.json        # Root workspace config
 ```
 
 ---
 
-### 🧪 Testing
-
-Code-explainer-app uses the default React testing framework (e.g., `jest` / `react-scripts test`). Run tests using:
-
-```bash
-npm test
-```
-
----
-
-## 🔗 Links
-
-- **Live Demo**: [code-explainer-app.vercel.app](https://code-explainer-app-5kgp.vercel.app/)
-- **GitHub Repo**: [github.com/lalbear/code-explainer-app](https://github.com/lalbear/code-explainer-app)
-
----
+## 🤝 Contributing
+Contributions are welcome! If you'd like to improve syntax highlighting or add support for more languages, please open a PR.
 
 ## 📝 License
-
 This project is licensed under the [MIT License](LICENSE).

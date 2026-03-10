@@ -72,21 +72,24 @@ function AppContent() {
   // === Clear all ===
   const handleClear = () => setExplanations([]);
 
-  // === Export only text (skip images) ===
+  // === Export all as formatted text ===
   const handleExport = () => {
-    const textOnly = explanations
-      .map((e) => e.text)
-      .filter(Boolean)
-      .join("\n\n");
+    if (explanations.length === 0) return;
 
-    const blob = new Blob([textOnly || "No text explanations to export."], {
-      type: "text/plain",
-    });
+    const formattedOutput = explanations
+      .map((e, idx) => {
+        const header = `--- Explanation ${idx + 1} (${new Date(e.timestamp).toLocaleString()}) ---\n`;
+        return header + (e.text || "No text provided.") + (e.image ? "\n[Note: This explanation had a visualization image]" : "");
+      })
+      .join("\n\n" + "=".repeat(20) + "\n\n");
+
+    const blob = new Blob([formattedOutput], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "explanation.txt";
+    link.download = `code_explanations_${new Date().toISOString().split("T")[0]}.txt`;
     link.click();
+    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {

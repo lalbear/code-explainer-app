@@ -90,6 +90,12 @@ ${code}
       { models: preferredModels, timeout: 45000, retries: 1 }
     );
 
+    if (modelUsed !== preferredModels[0]) {
+      console.warn(`[AI Route] Primary model failed. Fell back to: ${modelUsed}`);
+    } else {
+      console.log(`[AI Route] Successfully used primary model: ${modelUsed}`);
+    }
+
     const explanation = resp?.data?.choices?.[0]?.message?.content || resp?.data?.choices?.[0]?.text || null;
     if (!explanation) {
       console.error("No explanation found in OpenRouter response:", resp?.data);
